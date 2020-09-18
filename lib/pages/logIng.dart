@@ -8,13 +8,8 @@ class logIn extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Color.fromRGBO(255, 255, 255, 3),
-      body: Container(
-        decoration: BoxDecoration(
-            image: DecorationImage(
-          image: AssetImage("assets/images/bottombg.png"),
-          fit: BoxFit.fitWidth,
-          alignment: Alignment.bottomLeft,
-        )),
+      body: SingleChildScrollView(
+        
         child: Container(
           child: Column(
             children: <Widget>[

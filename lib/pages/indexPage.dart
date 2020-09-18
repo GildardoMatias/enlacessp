@@ -2,6 +2,8 @@ import 'package:enlacessp/pages/Animation/FadeAnimation.dart';
 import 'package:enlacessp/pages/indexPageResources/nuevaInfraccion.dart';
 import 'package:flutter/material.dart';
 
+import 'package:location_permissions/location_permissions.dart';
+
 class IndexPage extends StatefulWidget {
   @override
   _IndexPageState createState() => _IndexPageState();
@@ -109,8 +111,9 @@ class _IndexPageState extends State<IndexPage> {
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10.0)),
       margin: EdgeInsets.only(left: 10, right: 10, bottom: 20),
       child: InkWell(
-        onTap: () {
+        onTap: () async {
           //openProductPage('$img', '$title');
+          PermissionStatus permission = await LocationPermissions().requestPermissions();
           Navigator.of(context).push(MaterialPageRoute(
             builder: (context) => NuevaInfraccion(),
           ));

@@ -2,9 +2,19 @@ import 'dart:io';
 
 import 'package:enlacessp/pages/Animation/FadeAnimation.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
+
+import 'package:flutter/services.dart';
+import 'dart:io';
+import 'dart:convert'; //to convert json to maps and vice versa
+import 'package:path_provider/path_provider.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:location_permissions/location_permissions.dart';
+import 'dart:io';
+import 'package:http/http.dart' as http;
 
 // ignore: camel_case_types
 class NuevaInfraccion extends StatefulWidget {
@@ -14,6 +24,13 @@ class NuevaInfraccion extends StatefulWidget {
 
 // ignore: camel_case_types
 class _NuevaInfraccionState extends State<NuevaInfraccion> {
+  //Variables requeridas para el archivo de datos
+  File jsonFile;
+  Directory dir;
+  String fileName = "myJSONFile.json";
+  bool fileExists = false;
+  Map<String, dynamic> fileContent;
+
   File _image;
   File _image2;
   File _image3;
@@ -27,19 +44,20 @@ class _NuevaInfraccionState extends State<NuevaInfraccion> {
   @override
   void dispose() {
     // TODO: implement dispose
-    _nombre.dispose();
-    _apellidoPaterno.dispose();
-    _apellidoMaterno.dispose();
-    _obtenercurp.dispose();
-    _inputFechaNacimiento.dispose();
-    _calle.dispose();
-    _numeroExterior.dispose();
-    _numeroInterior.dispose();
-    _codigoPostal.dispose();
-    _noAparece.dispose();
-    _referencias.dispose();
-    _otroBeneficio.dispose();
-    _cantidad.dispose();
+    _ciudad_evento.dispose();
+    _direccion.dispose();
+    _descripcion.dispose();
+    _nombre_conductor.dispose();
+    _primer_apellido.dispose();
+    _segundo_apellido.dispose();
+    _domicilio_conductor.dispose();
+    _numero_licencia.dispose();
+    _servicio_vehiculo.dispose();
+    _numero_placa.dispose();
+    _marca.dispose();
+    _linea.dispose();
+    _modelo.dispose();
+    _garantia.dispose();
     _observaciones.dispose();
     super.dispose();
   }
@@ -168,7 +186,7 @@ class _NuevaInfraccionState extends State<NuevaInfraccion> {
           compressFormat: ImageCompressFormat.jpg,
           androidUiSettings: AndroidUiSettings(
               toolbarTitle: 'Foto Licencia',
-              toolbarColor: Color.fromRGBO(130, 42, 82, 3),
+              toolbarColor: Color.fromRGBO(30, 42, 82, 3),
               toolbarWidgetColor: Colors.white,
               initAspectRatio: CropAspectRatioPreset.original,
               lockAspectRatio: false),
@@ -191,6 +209,15 @@ class _NuevaInfraccionState extends State<NuevaInfraccion> {
   void initState() {
     super.initState();
     _myActivities = [];
+    //Inicializacion del directorio de la app
+    getApplicationDocumentsDirectory().then((Directory directory) {
+      dir = directory;
+      jsonFile = new File(dir.path + "/" + fileName);
+      fileExists = jsonFile.existsSync();
+      if (fileExists)
+        this.setState(
+            () => fileContent = jsonDecode(jsonFile.readAsStringSync()));
+    });
   }
 
 //================================Controladores=========================================
@@ -199,23 +226,25 @@ class _NuevaInfraccionState extends State<NuevaInfraccion> {
   TextEditingController _localidadesTextFieldControoler =
       new TextEditingController();
   final formkey = GlobalKey<FormState>();
-  TextEditingController _nombre = new TextEditingController();
-  TextEditingController _apellidoPaterno = new TextEditingController();
-  TextEditingController _apellidoMaterno = new TextEditingController();
-  TextEditingController _obtenercurp = new TextEditingController();
-  TextEditingController _numeroCel = new TextEditingController();
-  TextEditingController _calle = new TextEditingController();
-  TextEditingController _numeroExterior = new TextEditingController();
-  TextEditingController _numeroInterior = new TextEditingController();
-  TextEditingController _codigoPostal = new TextEditingController();
-  TextEditingController _noAparece = new TextEditingController();
-  TextEditingController _referencias = new TextEditingController();
-  TextEditingController _otroBeneficio = new TextEditingController();
-  TextEditingController _cantidad = new TextEditingController();
+  TextEditingController _ciudad_evento = new TextEditingController();
+  TextEditingController _direccion = new TextEditingController();
+  TextEditingController _descripcion = new TextEditingController();
+  TextEditingController _nombre_conductor = new TextEditingController();
+  TextEditingController _primer_apellido = new TextEditingController();
+  TextEditingController _segundo_apellido = new TextEditingController();
+  TextEditingController _domicilio_conductor = new TextEditingController();
+  TextEditingController _numero_licencia = new TextEditingController();
+  TextEditingController _servicio_vehiculo = new TextEditingController();
+  TextEditingController _numero_placa = new TextEditingController();
+  TextEditingController _marca = new TextEditingController();
+  TextEditingController _linea = new TextEditingController();
+  TextEditingController _modelo = new TextEditingController();
+  TextEditingController _garantia = new TextEditingController();
   TextEditingController _observaciones = new TextEditingController();
+  String _claseVehiculo = "Clase1";
+  String _tipoLicencia = "Licencia1";
+
   String _generoBeneficiairo;
-  String _tipoLicencia;
-  String _claseVehiculo;
   String _tipodebeneficiarioTEDC;
   String _tipodebeneficioTEDC;
   List _discapacidad;
@@ -315,6 +344,7 @@ class _NuevaInfraccionState extends State<NuevaInfraccion> {
   Widget _ciudadEventoInput() {
     return Container(
       child: TextFormField(
+        controller: _ciudad_evento,
         autofocus: false,
         textCapitalization: TextCapitalization.sentences,
         decoration: InputDecoration(
@@ -349,6 +379,7 @@ class _NuevaInfraccionState extends State<NuevaInfraccion> {
   Widget _direccionInput() {
     return Container(
       child: TextFormField(
+        controller: _direccion,
         autofocus: false,
         textCapitalization: TextCapitalization.sentences,
         decoration: InputDecoration(
@@ -398,6 +429,7 @@ class _NuevaInfraccionState extends State<NuevaInfraccion> {
   Widget _descripccionHechos() {
     return Container(
       child: TextFormField(
+        controller: _descripcion,
         autofocus: false,
         textCapitalization: TextCapitalization.sentences,
         decoration: InputDecoration(
@@ -432,6 +464,7 @@ class _NuevaInfraccionState extends State<NuevaInfraccion> {
   Widget _nombreConductor() {
     return Container(
       child: TextFormField(
+        controller: _nombre_conductor,
         autofocus: false,
         textCapitalization: TextCapitalization.sentences,
         decoration: InputDecoration(
@@ -466,6 +499,7 @@ class _NuevaInfraccionState extends State<NuevaInfraccion> {
   Widget _primerApellido() {
     return Container(
       child: TextFormField(
+        controller: _primer_apellido,
         autofocus: false,
         textCapitalization: TextCapitalization.sentences,
         decoration: InputDecoration(
@@ -500,6 +534,7 @@ class _NuevaInfraccionState extends State<NuevaInfraccion> {
   Widget _segundoApellido() {
     return Container(
       child: TextFormField(
+        controller: _segundo_apellido,
         autofocus: false,
         textCapitalization: TextCapitalization.sentences,
         decoration: InputDecoration(
@@ -534,6 +569,7 @@ class _NuevaInfraccionState extends State<NuevaInfraccion> {
   Widget _domicilioConductor() {
     return Container(
       child: TextFormField(
+        controller: _domicilio_conductor,
         autofocus: false,
         textCapitalization: TextCapitalization.sentences,
         decoration: InputDecoration(
@@ -627,8 +663,8 @@ class _NuevaInfraccionState extends State<NuevaInfraccion> {
   Widget _numeroLicencia() {
     return Container(
       child: TextFormField(
+        controller: _numero_licencia,
         autofocus: false,
-        keyboardType: TextInputType.number,
         textCapitalization: TextCapitalization.sentences,
         decoration: InputDecoration(
           focusedBorder: OutlineInputBorder(
@@ -662,6 +698,7 @@ class _NuevaInfraccionState extends State<NuevaInfraccion> {
   Widget _servcioVehiculo() {
     return Container(
       child: TextFormField(
+        controller: _servicio_vehiculo,
         autofocus: false,
         textCapitalization: TextCapitalization.sentences,
         decoration: InputDecoration(
@@ -696,6 +733,7 @@ class _NuevaInfraccionState extends State<NuevaInfraccion> {
   Widget _numeroPlaca() {
     return Container(
       child: TextFormField(
+        controller: _numero_placa,
         autofocus: false,
         textCapitalization: TextCapitalization.sentences,
         decoration: InputDecoration(
@@ -730,6 +768,7 @@ class _NuevaInfraccionState extends State<NuevaInfraccion> {
   Widget _marcaInput() {
     return Container(
       child: TextFormField(
+        controller: _marca,
         autofocus: false,
         textCapitalization: TextCapitalization.sentences,
         decoration: InputDecoration(
@@ -764,6 +803,7 @@ class _NuevaInfraccionState extends State<NuevaInfraccion> {
   Widget _lineaInput() {
     return Container(
       child: TextFormField(
+        controller: _linea,
         autofocus: false,
         textCapitalization: TextCapitalization.sentences,
         decoration: InputDecoration(
@@ -798,6 +838,7 @@ class _NuevaInfraccionState extends State<NuevaInfraccion> {
   Widget _modeloInput() {
     return Container(
       child: TextFormField(
+        controller: _modelo,
         autofocus: false,
         textCapitalization: TextCapitalization.sentences,
         decoration: InputDecoration(
@@ -891,6 +932,7 @@ class _NuevaInfraccionState extends State<NuevaInfraccion> {
   Widget _garantiaInput() {
     return Container(
       child: TextFormField(
+        controller: _garantia,
         autofocus: false,
         textCapitalization: TextCapitalization.sentences,
         decoration: InputDecoration(
@@ -1106,43 +1148,75 @@ class _NuevaInfraccionState extends State<NuevaInfraccion> {
     );
   }
 
-  bool validarCurp(String value) {
-    Pattern pattern =
-        r'([A-Z][AEIOUX][A-Z]{2}\d{2}(?:0\d|1[0-2])(?:[0-2]\d|3[01])[HM](?:AS|B[CS]|C[CLMSH]|D[FG]|G[TR]|HG|JC|M[CNS]|N[ETL]|OC|PL|Q[TR]|S[PLR]|T[CSL]|VZ|YN|ZS)[B-DF-HJ-NP-TV-Z]{3}[A-Z\d])(\d)';
-    RegExp regex = new RegExp(pattern);
+  // bool validarCurp(String value) {
+  //   Pattern pattern =
+  //       r'([A-Z][AEIOUX][A-Z]{2}\d{2}(?:0\d|1[0-2])(?:[0-2]\d|3[01])[HM](?:AS|B[CS]|C[CLMSH]|D[FG]|G[TR]|HG|JC|M[CNS]|N[ETL]|OC|PL|Q[TR]|S[PLR]|T[CSL]|VZ|YN|ZS)[B-DF-HJ-NP-TV-Z]{3}[A-Z\d])(\d)';
+  //   RegExp regex = new RegExp(pattern);
 
-    return (!regex.hasMatch(value)) ? false : true;
-  }
+  //   return (!regex.hasMatch(value)) ? false : true;
+  // }
 
-  void _submit() {
-    if (!formKey.currentState.validate()) {
+  void _submit() async {
+    if (!formKey.currentState.validate())  {
       setState(() {
         completarInputs = 'false';
-        if (validarCurp(_obtenercurp.text) == true) {
-          validacionFinal = "true";
-          //print("Tu Curp ${_obtenercurp.text} Es Valida");
-        } else {
-          //print("Tu Curp ${_obtenercurp.text} No es Valida");
-          validacionFinal = "false";
-        }
-        print(_numeroExterior);
+        validacionFinal = "true";
       });
     } else {
-      setState(() {
+      setState(() async {
         completarInputs = '';
-        if (validarCurp(_obtenercurp.text) == true) {
-          validacionFinal = "true";
-          //print("Tu Curp ${_obtenercurp.text} Es Valida");
-        } else {
-          //print("Tu Curp ${_obtenercurp.text} No es Valida");
-          validacionFinal = "false";
-        }
-        print(_numeroExterior);
+        PermissionStatus permission = await LocationPermissions().requestPermissions();
+        Position position = await getLastKnownPosition();
+        writeToFile("${position.latitude}", "${position.longitude}");
+        final String ruta = await _localPath;
+        File(_image.path).copy("$ruta/${_nombre_conductor.text.trim()}${_numero_placa.text.trim()}-1.png");
+        File(_image2.path).copy("$ruta/${_nombre_conductor.text.trim()}${_numero_placa.text.trim()}-2.png");
+        File(_image3.path).copy("$ruta/${_nombre_conductor.text.trim()}${_numero_placa.text.trim()}-3.png");
+        File(_image4.path).copy("$ruta/${_nombre_conductor.text.trim()}${_numero_placa.text.trim()}-4.png");
+        /*
+        try {
+          final result = await InternetAddress.lookup('google.com');
+          if (result.isNotEmpty && result[0].rawAddress.isNotEmpty) {
+            print('connected');
+            subir("$ruta/${_nombre_conductor.text.trim()}${_numero_placa.text.trim()}-1.png");
+            subir("$ruta/${_nombre_conductor.text.trim()}${_numero_placa.text.trim()}-2.png");
+            subir("$ruta/${_nombre_conductor.text.trim()}${_numero_placa.text.trim()}-3.png");
+            subir("$ruta/${_nombre_conductor.text.trim()}${_numero_placa.text.trim()}-3.png");
+            subir("$ruta/$fileName");
+            File("$ruta/${_nombre_conductor.text.trim()}${_numero_placa.text.trim()}-1.png").delete();
+            File("$ruta/${_nombre_conductor.text.trim()}${_numero_placa.text.trim()}-2.png").delete();
+            File("$ruta/${_nombre_conductor.text.trim()}${_numero_placa.text.trim()}-3.png").delete();
+            File("$ruta/${_nombre_conductor.text.trim()}${_numero_placa.text.trim()}-4.png").delete();
+            File("$ruta/$fileName").delete();
+          } else {
+            checkNativeFile();
+          }
+        } on SocketException catch (_) {
+          checkNativeFile();
+          print('not connected');
+          
+        }*/
+        checkNativeFile();
+        Navigator.of(context).pop();
       });
     }
   }
 
-  Widget _leerCurp() {
+  subir(String filename)async{
+    //Subida de datos
+    var request = http.MultipartRequest('POST', Uri.parse("https://siegeest.app/API2/file.php"));
+    request.files.add(
+    http.MultipartFile.fromBytes(
+      'uploaded_file',
+      File(filename).readAsBytesSync(),
+      filename: filename.split("/").last
+    )
+  );
+  var res = await request.send();
+  print("\n\n${res.statusCode}\n");
+  }
+
+  /* Widget _leerCurp() {
     return ListTile(
         title: validacionFinal == 'true'
             ? Text(
@@ -1155,5 +1229,78 @@ class _NuevaInfraccionState extends State<NuevaInfraccion> {
                     style: TextStyle(color: Colors.red),
                   )
                 : Text(''));
+  }*/
+
+  Future<String> get _localPath async {
+    final directory = await getApplicationDocumentsDirectory();
+    //final directory = await getExternalStorageDirectory();
+
+    return directory.path;
+  }
+
+  //Metodos para escribir en el fichero json
+  void createFile(
+      Map<String, dynamic> content, Directory dir, String fileName) {
+    print("Creating file!");
+    File file = new File(dir.path + "/" + fileName);
+    file.createSync();
+    fileExists = true;
+    file.writeAsStringSync(jsonEncode(content));
+  }
+
+  void writeToFile(String lat, String long) {
+    print("Writing to file!");
+    print("\n\n$dir\n\n");
+    Map<String, dynamic> otro = {
+      "${_nombre_conductor.text}${_numero_placa.text}": {
+        "folio": "${_nombre_conductor.text.trim()}${_numero_placa.text.trim()}",
+        "ciudad_evento": "${_ciudad_evento.text}",
+        "direccion": "${_direccion.text}",
+        "descripcion": "${_descripcion.text}",
+        "nombre_conductor": "${_nombre_conductor.text}",
+        "primer_apellido": "${_primer_apellido.text}",
+        "segundo_apellido": "${_segundo_apellido.text}",
+        "domicilio_conductor": "${_domicilio_conductor.text}",
+        "licencia": "$_tipoLicencia",
+        "numero_licencia": "${_numero_licencia.text}",
+        "servicio_vehiculo": "${_servicio_vehiculo.text}",
+        "numero_placa": "${_numero_placa.text}",
+        "marca": "${_marca.text}",
+        "linea": "${_linea.text}",
+        "modelo": "${_modelo.text}",
+        "clase_vehiculo": "$_claseVehiculo",
+        "garantia": "${_garantia.text}",
+        "observaciones": "${_observaciones.text}",
+        "latitud": "$lat",
+        "longitud": "$long"
+      }
+    };
+    if (fileExists) {
+      print("File exists");
+      Map<String, dynamic> jsonFileContent =
+          json.decode(jsonFile.readAsStringSync());
+      jsonFileContent.addAll(otro);
+      jsonFile.writeAsStringSync(jsonEncode(jsonFileContent));
+    } else {
+      print("File does not exist!");
+      createFile(otro, dir, fileName);
+    }
+    this.setState(() => fileContent = jsonDecode(jsonFile.readAsStringSync()));
+    print(fileContent);
+  }
+  //Fin de Metodos para escribir en el fichero json
+
+  static const platform = const MethodChannel('samples.flutter.dev/battery');
+  checkNativeFile() async {
+    try {
+      final bool result = await platform.invokeMethod('checkFile');
+      Fluttertoast.showToast(msg: "Datos enviados");
+    } on PlatformException catch (e) {
+      print("Error al conectar methodChannel: '${e.message}'.");
+    }
   }
 }
+
+//Start foreground service
+//Fosfan venus atmosphere
+//Try to know why not sending 

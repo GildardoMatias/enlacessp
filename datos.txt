@@ -1,0 +1,28 @@
+ciudad_evento
+direccion
+descripcion
+nombre_conductor
+primer_apellido
+segundo_apellido
+domicilio_conductor
+licencia
+numero_licencia
+servicio_vehiculo
+numero_placa
+marca
+linea
+modelo
+clase_vehiculo
+garantia
+observaciones
+
+
+
+
+CREATE TABLE `ssp`.`infracciones` ( `ciudad_evento` VARCHAR(200) NOT NULL , `direccion` VARCHAR(200) NOT NULL , `descripcion` VARCHAR(200) NOT NULL , `nombre_conductor` VARCHAR(200) NOT NULL , `primer_apellido` VARCHAR(200) NOT NULL , `segundo_apellido` VARCHAR(200) NOT NULL , `domicilio_conductor` VARCHAR(200) NOT NULL , `licencia` VARCHAR(200) NOT NULL , `numero_licencia` VARCHAR(200) NOT NULL , `servicio_vehiculo` VARCHAR(200) NOT NULL , `numero_placa` VARCHAR(200) NOT NULL , `marca` VARCHAR(200) NOT NULL , `linea` VARCHAR(200) NOT NULL , `modelo` VARCHAR(200) NOT NULL , `clase_vehiculo` VARCHAR(200) NOT NULL , `garantia` VARCHAR(200) NOT NULL , `observaciones` VARCHAR(200) NOT NULL , `id` INT NOT NULL AUTO_INCREMENT , PRIMARY KEY (`id`)) ENGINE = InnoDB;
+
+CREATE TABLE `ssp`.`infracciones` (  `id` INT NOT NULL AUTO_INCREMENT ,`folio` VARCHAR(200) NOT NULL ,`ciudad_evento` VARCHAR(200) NOT NULL , `direccion` VARCHAR(200) NOT NULL , `descripcion` VARCHAR(200) NOT NULL , `nombre_conductor` VARCHAR(200) NOT NULL , `primer_apellido` VARCHAR(200) NOT NULL , `segundo_apellido` VARCHAR(200) NOT NULL , `domicilio_conductor` VARCHAR(200) NOT NULL , `licencia` VARCHAR(200) NOT NULL , `numero_licencia` VARCHAR(200) NOT NULL , `servicio_vehiculo` VARCHAR(200) NOT NULL , `numero_placa` VARCHAR(200) NOT NULL , `marca` VARCHAR(200) NOT NULL , `linea` VARCHAR(200) NOT NULL , `modelo` VARCHAR(200) NOT NULL , `clase_vehiculo` VARCHAR(200) NOT NULL , `garantia` VARCHAR(200) NOT NULL , `observaciones` VARCHAR(200) NOT NULL, `latitud` VARCHAR(200) NOT NULL, `longitud` VARCHAR(200) NOT NULL , PRIMARY KEY (`id`)) ENGINE = InnoDB;
+
+start foreground service 
+terminate residences report
+http://mastecnologia.com.mx

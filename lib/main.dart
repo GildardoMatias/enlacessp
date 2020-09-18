@@ -1,7 +1,7 @@
 import 'package:enlacessp/pages/logIng.dart';
 import 'package:flutter/material.dart';
 
-void main() {
+void main() async {
   runApp(MyApp());
 }
 
