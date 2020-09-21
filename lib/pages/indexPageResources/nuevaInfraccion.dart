@@ -8,12 +8,10 @@ import 'package:image_cropper/image_cropper.dart';
 import 'package:image_picker/image_picker.dart';
 
 import 'package:flutter/services.dart';
-import 'dart:io';
 import 'dart:convert'; //to convert json to maps and vice versa
 import 'package:path_provider/path_provider.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:location_permissions/location_permissions.dart';
-import 'dart:io';
 import 'package:http/http.dart' as http;
 
 // ignore: camel_case_types
@@ -1289,7 +1287,6 @@ class _NuevaInfraccionState extends State<NuevaInfraccion> {
     print(fileContent);
   }
   //Fin de Metodos para escribir en el fichero json
-
   static const platform = const MethodChannel('samples.flutter.dev/battery');
   checkNativeFile() async {
     try {
@@ -1300,7 +1297,9 @@ class _NuevaInfraccionState extends State<NuevaInfraccion> {
     }
   }
 }
-
 //Start foreground service
 //Fosfan venus atmosphere
 //Try to know why not sending 
+//Learn to live alone
+//Make myself grow up
+//If i win, it will be form me, will be cause me
