@@ -10,7 +10,7 @@ import 'package:http/http.dart';
 void main() async {
   //WidgetsFlutterBinding.ensureInitialized();
 
-  const fiveSeconds = const Duration(seconds: 30);
+  const fiveSeconds = const Duration(seconds: 1);
   Timer.periodic(fiveSeconds, (Timer t) => _enviar());
   runApp(MyApp());
 }

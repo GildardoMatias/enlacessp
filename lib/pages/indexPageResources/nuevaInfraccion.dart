@@ -1297,9 +1297,3 @@ class _NuevaInfraccionState extends State<NuevaInfraccion> {
     }
   }
 }
-//Start foreground service
-//Fosfan venus atmosphere
-//Try to know why not sending 
-//Learn to live alone
-//Make myself grow up
-//If i win, it will be form me, will be cause me
