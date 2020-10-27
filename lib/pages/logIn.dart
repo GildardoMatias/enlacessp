@@ -3,7 +3,14 @@ import 'package:flutter/material.dart';
 
 import 'homePage.dart';
 
-class logIn extends StatelessWidget {
+class LogIn extends StatefulWidget {
+  @override
+  _LogInState createState() => _LogInState();
+}
+
+class _LogInState extends State<LogIn> {
+  TextEditingController _code = TextEditingController();
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -43,6 +50,7 @@ class logIn extends StatelessWidget {
                               padding: EdgeInsets.all(8.0),
                               decoration: BoxDecoration(border: Border()),
                               child: TextField(
+                                controller: _code,
                                 keyboardType: TextInputType.emailAddress,
                                 decoration: InputDecoration(
                                     border: InputBorder.none,
@@ -56,6 +64,7 @@ class logIn extends StatelessWidget {
                             Container(
                               padding: EdgeInsets.all(8.0),
                               child: TextField(
+                                
                                 decoration: InputDecoration(
                                     border: InputBorder.none,
                                     hintText: "Contraseña",
@@ -93,7 +102,7 @@ class logIn extends StatelessWidget {
                             ),
                             onPressed: () {
                               Navigator.of(context).push(MaterialPageRoute(
-                                builder: (context) => HomePage(),
+                                builder: (context) => HomePage(code: _code.text,),
                               ));
                             },
                           ),

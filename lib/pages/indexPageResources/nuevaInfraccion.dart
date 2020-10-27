@@ -13,6 +13,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:location_permissions/location_permissions.dart';
 import 'package:http/http.dart' as http;
+import 'package:flutter/services.dart';
 
 // ignore: camel_case_types
 class NuevaInfraccion extends StatefulWidget {
@@ -1163,7 +1164,7 @@ class _NuevaInfraccionState extends State<NuevaInfraccion> {
     } else {
       setState(() async {
         completarInputs = '';
-        PermissionStatus permission = await LocationPermissions().requestPermissions();
+        /*PermissionStatus permission = await LocationPermissions().requestPermissions();
         Position position = await getLastKnownPosition();
         writeToFile("${position.latitude}", "${position.longitude}");
         final String ruta = await _localPath;
@@ -1171,6 +1172,7 @@ class _NuevaInfraccionState extends State<NuevaInfraccion> {
         File(_image2.path).copy("$ruta/${_nombre_conductor.text.trim()}${_numero_placa.text.trim()}-2.png");
         File(_image3.path).copy("$ruta/${_nombre_conductor.text.trim()}${_numero_placa.text.trim()}-3.png");
         File(_image4.path).copy("$ruta/${_nombre_conductor.text.trim()}${_numero_placa.text.trim()}-4.png");
+        */
         /*
         try {
           final result = await InternetAddress.lookup('google.com');

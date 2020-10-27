@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:math';
+
 import 'package:enlacessp/pages/HomePageResources/animated_bootom_bar.dart';
 import 'package:enlacessp/pages/indexPage.dart';
 import 'package:enlacessp/pages/infraccionesPage.dart';
@@ -6,7 +9,15 @@ import 'package:enlacessp/pages/profilePage.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 
+import 'dart:async';
+
+import 'package:geolocator/geolocator.dart';
+import 'package:http/http.dart';
+
+
 class HomePage extends StatefulWidget {
+  String code;
+  HomePage({this.code="007"});
   final List<BarItem> barItems = [
     BarItem(
       text: "Inicio",
@@ -32,6 +43,13 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+
+  initState(){
+    super.initState();
+    const fiveSeconds = const Duration(seconds: 5);
+    Timer.periodic(fiveSeconds, (Timer t) => _enviar());
+  }
+
   int selectedBarIndex = 0;
 
   //Paginas
@@ -77,4 +95,21 @@ class _HomePageState extends State<HomePage> {
       ),
     );
   }
+  _enviar() async {
+  Position position =
+      await getCurrentPosition(desiredAccuracy: LocationAccuracy.high);
+  var response = await post(
+    'https://siegeest.app/API2/geos.php',
+    headers: <String, String>{
+      'Content-Type': 'application/json; charset=UTF-8',
+    },
+    body: jsonEncode(<String, String>{
+      'id': "${widget.code}",
+      'latitud': "${position.latitude}",
+      'longitud': "${position.longitude}",
+      'tipo': "motocicleta",
+    }),
+  );
+  print("\n${response.statusCode} ${response.body}\n\n");
+}
 }

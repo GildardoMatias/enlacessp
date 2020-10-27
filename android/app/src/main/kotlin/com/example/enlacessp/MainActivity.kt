@@ -4,7 +4,6 @@ package com.example.enlacessp
 
 class MainActivity: FlutterActivity() {
 }*/
-
 import android.content.Context
 import android.content.ContextWrapper
 import android.content.Intent
@@ -14,21 +13,17 @@ import android.net.NetworkInfo
 import android.os.BatteryManager
 import android.os.Build.VERSION
 import android.os.Build.VERSION_CODES
-import android.widget.Toast
 import androidx.annotation.NonNull
-import com.android.volley.AuthFailureError
-import com.android.volley.Request
 import com.android.volley.Response
-import com.android.volley.VolleyError
-import com.android.volley.toolbox.JsonObjectRequest
-import com.android.volley.toolbox.StringRequest
 import com.android.volley.toolbox.Volley
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
 import io.flutter.plugin.common.MethodChannel
-import org.json.JSONObject
 import java.io.File
-import kotlin.concurrent.thread
+import java.io.IOException
+import java.net.InetAddress
+import java.net.InetSocketAddress
+import java.net.Socket
 
 class MainActivity() : FlutterActivity() {
     private val CHANNEL = "samples.flutter.dev/battery"
@@ -54,10 +49,8 @@ class MainActivity() : FlutterActivity() {
                 Thread(Runnable {
                     while (!isOnline(this)) {
                     }
-                    //wmethod()
                     MyService.stopService(this)
                 }).start()
-                //val internetStatus = isOnline(context)
                 result.success(true)
             } else if (call.method == "checkFile") {
                 val f = File("/data/user/0/" + context.getPackageName() + "/app_flutter/myJSONFile.json")
@@ -65,21 +58,25 @@ class MainActivity() : FlutterActivity() {
                 context?.startService(intent)
                 MyService.startService(this, "Esperando conexion de red...")
                 Thread(Runnable {
-                    while (!isOnline(this)) {
-                    }
-                    //wmethod()
+                    //while (!isOnline(this)) { }
+                    while (!isHostAvailable("google.com", 80, 1000)) {  }
                     if (f.exists()){
                         println("El archivo existe" )
-                        //UploadUtility(this).uploadFile("/data/user/0/" + context.getPackageName() + "/app_flutter/myJSONFile.json")
                         subir(this,File("/data/user/0/" + context.getPackageName() + "/app_flutter/myJSONFile.json"))
                         println("\n\nArchivo subido\n\n")
                         subirImagenes(File("/data/user/0/" + context.getPackageName() + "/app_flutter/"))
                         //Para finalizar, borrar archivos
+                        Thread.sleep(500);
                         File("/data/user/0/" + context.getPackageName() + "/app_flutter/myJSONFile.json").delete()
                         borrarImagenes(File("/data/user/0/" + context.getPackageName() + "/app_flutter/"))
+                        Thread.sleep(500);
+                        MyService.stopService(this)
                     }
-                    else println("El archivo no existe")
-                    MyService.stopService(this)
+                    else {
+                        println("El archivo no existe")
+                        Thread.sleep(1000)
+                        MyService.stopService(this)
+                    }
                 }).start()
                 result.success(true)
             } else {
@@ -88,20 +85,24 @@ class MainActivity() : FlutterActivity() {
         }
     }
     //Subir todas las imagenes en el directorio de documentos de la app
-    //We need to decode json filed
-    fun subirImagenes(root: File){
+    fun subirImagenes(root: File): ArrayList < File > {
+        val a: ArrayList < File > = ArrayList()
         if (root.exists()) {
             val files = root.listFiles()
             if (files.isNotEmpty()) {
                 for (i in 0..files.size - 1) {
-                    if (files[i].name.endsWith(".png")) {
+                    if (files[i].name.endsWith(".jpg")) {
+                        a.add(files[i])
                         subir(this,files[i])
                         println("Archivo: ${files[i].name} subido")
                     }
                 }
             }
         }
+        return a!!
     }
+    
+
     //Borrar Imágenes
     fun borrarImagenes(root: File): ArrayList < File > {
         val a: ArrayList < File > = ArrayList()
@@ -119,6 +120,8 @@ class MainActivity() : FlutterActivity() {
         }
         return a!!
     }
+
+    
     //Recibe un archivo y lo sube al servidor definifo en postUrl
     fun subir (context: Context, file: File) {
         //val postUrl = "http://192.168.1.65/API2/file.php"
@@ -167,4 +170,19 @@ class MainActivity() : FlutterActivity() {
         }
         return batteryLevel
     }
+    //What can be wrong
+    open fun isHostAvailable(host: String?, port: Int, timeout: Int): Boolean {
+        try {
+            Socket().use { socket ->
+                val inetAddress: InetAddress = InetAddress.getByName(host)
+                val inetSocketAddress = InetSocketAddress(inetAddress, port)
+                socket.connect(inetSocketAddress, timeout)
+                return true
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+            return false
+        }
+    }
+    //End of what
 }

@@ -1,4 +1,4 @@
-import 'package:enlacessp/pages/logIng.dart';
+import 'package:enlacessp/pages/logIn.dart';
 import 'package:flutter/material.dart';
 import 'Animation/FadeAnimation.dart';
 
@@ -171,6 +171,22 @@ class _PerfilPageState extends State<PerfilPage> {
                     Text("443 540 2470"),
                   ],
                 ),
+                SizedBox(
+                  height: 20,
+                ),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: <Widget>[
+                    Text(
+                      "Tipo:",
+                      style: TextStyle(fontWeight: FontWeight.bold),
+                    ),
+                    SizedBox(
+                      width: 10,
+                    ),
+                    Text("Motocicleta"),
+                  ],
+                ),
               ],
             ),
           ),
@@ -199,7 +215,7 @@ class _PerfilPageState extends State<PerfilPage> {
           ),
           onPressed: () {
             Navigator.of(context).push(MaterialPageRoute(
-              builder: (context) => logIn(),
+              builder: (context) => LogIn(),
             ));
           },
         ),
